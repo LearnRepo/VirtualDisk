@@ -15,6 +15,7 @@ import java.io.IOException;
 public class MakeDisk {
 	public MakeDisk(String name, int size, String Byte) throws IOException
 	{
+		System.out.println("Making Disk...");
 		switch(Byte)
 		{
 		case "MB":
@@ -66,12 +67,26 @@ public class MakeDisk {
             out = new FileOutputStream("D:\\VD\\"+name);
             for(int i=0;i<div;i++)
             out.write(c);
-            System.out.print("Successfully Disk Created");
+            System.out.println("Successfully Disk Created!");
         } 
 		finally {
         	if (out != null) {
                 out.close();
             }
         }
+		System.out.println("Preapre disk for use...");
+		prepareDisk(size-6);
+	}
+	private void prepareDisk(long size)
+	{
+		long temp;
+		System.out.println(size);
+		temp = size/(1024*1024);
+		System.out.println("Size in MB:"+temp/256+" "+temp%256);
+		temp = (size%(1024*1024))/(1024);
+		System.out.println("Size in KB:"+temp/256+" "+temp%256);
+		temp = (size%(1024*1024))%(1024);
+		System.out.println("Size in Byte:"+temp/256+" "+temp%256);
+		
 	}
 }
