@@ -2,6 +2,7 @@ package diskvirtual;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /*
  * Get the size of disk by user - done
@@ -64,7 +65,7 @@ public class MakeDisk {
 				c[i] = 0x00;
 		}
 		try {
-            out = new FileOutputStream("D:\\VD\\"+name);
+            out = new FileOutputStream(name);
             for(int i=0;i<div;i++)
             out.write(c);
             System.out.println("Successfully Disk Created!");
@@ -74,19 +75,61 @@ public class MakeDisk {
                 out.close();
             }
         }
-		System.out.println("Preapre disk for use...");
-		prepareDisk(size-6);
-	}
-	private void prepareDisk(long size)
-	{
-		long temp;
-		System.out.println(size);
-		temp = size/(1024*1024);
-		System.out.println("Size in MB:"+temp/256+" "+temp%256);
-		temp = (size%(1024*1024))/(1024);
-		System.out.println("Size in KB:"+temp/256+" "+temp%256);
-		temp = (size%(1024*1024))%(1024);
-		System.out.println("Size in Byte:"+temp/256+" "+temp%256);
+		System.out.println("Preparing disk for use...");
+		prepareDisk(size-9, name);
+		System.out.println("Disk is ready!");
 		
+	}
+	private void prepareDisk(long size, String name)
+	{
+		long temp, tempMS, tempKS,tempBS;
+		byte SBit;
+		byte Mbit,Kbit,Bbit;
+		//System.out.println(size);
+		temp = size/(1024*1024);
+		//System.out.println("Size in MB:"+temp/256+" "+temp%256);
+		tempMS = temp/256;
+		Mbit = (byte)(temp%256);
+		temp = (size%(1024*1024))/(1024);
+		//System.out.println("Size in KB:"+temp/256+" "+temp%256);
+		tempKS = temp/256;
+		Kbit = (byte)(temp%256);
+		temp = (size%(1024*1024))%(1024);
+		//System.out.println("Size in Byte:"+temp/256+" "+temp%256);
+		tempBS = temp/256;
+		Bbit = (byte)(temp%256);
+		SBit = encodeSignificantBit(tempMS,tempKS,tempBS);
+		System.out.print("S:"+orginalByte(SBit)+"M:"+orginalByte(Mbit)+"K:"+orginalByte(Kbit)+"B:"+orginalByte(Bbit));
+		RandomAccessFile aFile;
+		try{
+			aFile     = new RandomAccessFile(name, "rw");
+			aFile.seek(aFile.length()-2);
+			aFile.write(SBit);
+			aFile.seek(aFile.length()-3);
+			aFile.write(Mbit);
+			aFile.seek(aFile.length()-4);
+			aFile.write(Kbit);
+			aFile.seek(aFile.length()-5);
+			aFile.write(Bbit);
+			aFile.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private byte encodeSignificantBit(long w, long x, long y)
+	{
+		w = w << 4;
+		x = x << 2;
+		return (byte) (w|x|y);
+	}
+	private int orginalByte(byte b1)
+	{
+		if(b1<0)
+		return (256- (~(b1-1)));
+		else
+			return b1;
 	}
 }

@@ -59,34 +59,24 @@ public class AddFile {
 	}
 	private void fileWriteTest()
 	{
-		Byte [] b= new Byte[5];
-		b[0] = 0x01;
-		b[1] = 0x23;
-		b[2] = 0x66;
-		b[3] = 0x54;
-		b[4] = 0x11;
 		RandomAccessFile aFile;
 		try{
 			aFile     = new RandomAccessFile("D:\\VD\\vd1.shd", "rw");
 			String data= "Hello I am only person exist in world";
 			long fileLength = aFile.length();
-			byte b1 = (byte)255;
-			System.out.print(orginalByte(b1)+" ");
+			/*byte b1 = (byte)255;
+			System.out.print(orginalByte(b1)+" ");*/
 			aFile.seek(fileLength-1);
 			int IndexBit = aFile.read();	//Index bit
 			aFile.seek(fileLength-2);
-			int Significate = aFile.read();
+			int Sbit = aFile.read();
 			aFile.seek(fileLength-3);
-			int MSpaceLeft = aFile.read();
+			int Mbit = aFile.read();
 			aFile.seek(fileLength-4);
-			int KSpaceLeft = aFile.read();
+			int Kbit = aFile.read();
 			aFile.seek(fileLength-5);
-			int MNextOffset = aFile.read();
-			aFile.seek(fileLength-6);
-			int KNextOffset = aFile.read();
-			
-			
-			System.out.print(IndexBit+""+MNextOffset+""+KNextOffset+""+MSpaceLeft+""+KSpaceLeft);
+			int Bbit = aFile.read();
+			System.out.print(IndexBit+" "+Sbit+" "+Mbit+" "+Kbit+" "+Bbit);
 			
 			aFile.close();
 		}
